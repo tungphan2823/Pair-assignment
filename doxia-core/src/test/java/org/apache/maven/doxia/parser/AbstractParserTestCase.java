@@ -1,0 +1,76 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.maven.doxia.parser;
+
+import java.io.FileReader;
+import java.io.Reader;
+
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.impl.SinkAdapter;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
+
+import static org.codehaus.plexus.testing.PlexusExtension.getBasedir;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+
+/**
+ * Test the parsing of sample input files
+ *
+ * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
+ * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
+ * @since 1.0
+ */
+@PlexusTest
+public abstract class AbstractParserTestCase {
+    /**
+     * Parser to use to convert input to sink events
+     *
+     * @return the parser to use
+     */
+    protected abstract Parser getParser();
+
+    /**
+     * Path of the model to test, relative to basedir
+     *
+     * @return the relative path
+     */
+    protected abstract String getDocument();
+
+    /**
+     * Sink to write the output of the parsing
+     *
+     * @return a SinkAdapter if not overridden
+     */
+    protected Sink getSink() {
+        return new SinkAdapter();
+    }
+
+    /**
+     * Parse the model in the path specified by {@link #getDocument()},
+     * with parser from {@link #getParser()}, and output to sink from {@link #getSink()}
+     *
+     * @throws Exception if any.
+     */
+    @Test
+    public void testParser() throws Exception {
+        Reader reader = new FileReader(getTestFile(getBasedir(), getDocument()));
+
+        getParser().parse(reader, getSink());
+    }
+}
